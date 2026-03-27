@@ -88,8 +88,8 @@
                     <button onclick="findPartner()" id="btn-partner" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg">
                         <i class="fas fa-handshake"></i> Find Partner
                     </button>
-                    <button onclick="resetTrial()" class="w-full bg-slate-400 hover:bg-slate-500 text-white font-bold py-2 rounded-lg text-sm">
-                        Reset
+                    <button onclick="resetAllTrials()" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-lg text-sm">
+                        <i class="fas fa-redo"></i> Reset All
                     </button>
                 </div>
             </div>
@@ -207,7 +207,7 @@
 
         function findPartner() {
             if (currentGeneration > 5) {
-                alert('Trial complete! Reset to start over.');
+                alert('Trial complete! Switch trials or reset to start over.');
                 return;
             }
 
@@ -228,10 +228,6 @@
             trials[currentTrial].data.push(offspring);
 
             // Display results
-            document.getElementById('your-geno').textContent = currentGenotype === offspring ? 
-                [yourAllele, partnerAllele].sort().join('').slice(0, -1) + yourAllele : 
-                currentGenotype;
-            
             let previousGeno = trials[currentTrial].data[trials[currentTrial].data.length - 2];
             document.getElementById('your-geno').textContent = previousGeno;
             document.getElementById('partner-geno').textContent = partnerGenotype;
@@ -266,8 +262,38 @@
             `).join('');
         }
 
-        function resetTrial() {
-            setTrial(currentTrial);
+        function resetAllTrials() {
+            // Reset all trials
+            trials = {
+                1: { data: ['Ll'] },
+                2: { data: ['Ll'] },
+                3: { data: ['Ll'] }
+            };
+
+            // Reset current trial
+            currentTrial = 1;
+            currentGeneration = 1;
+            currentGenotype = 'Ll';
+
+            // Reset UI - Trial 1 button
+            for (let t = 1; t <= 3; t++) {
+                const btn = document.getElementById(`trial-${t}`);
+                if (t === 1) {
+                    btn.className = 'px-6 py-3 rounded-lg border-2 border-blue-500 bg-blue-50 text-blue-700 font-bold';
+                } else {
+                    btn.className = 'px-6 py-3 rounded-lg border-2 border-slate-200 text-slate-600 font-bold hover:border-blue-300';
+                }
+            }
+
+            document.getElementById('trial-num').textContent = '1';
+            document.getElementById('completion').classList.add('hidden');
+            document.getElementById('result-section').classList.add('hidden');
+            document.getElementById('no-result').classList.remove('hidden');
+            
+            // Update all displays
+            updateDisplay();
+            
+            alert('✓ All trials have been reset to generation 1!');
         }
 
         function downloadResults() {
